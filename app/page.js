@@ -1,12 +1,27 @@
 "use client"
 import Todo from "@/components/Todo";
 import axios from "axios";
-import React,{ useState } from 'react';
+import React,{ useState,useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 export default function Home() {
   const [formData,setFormData]= useState({title:"",description:""});
+  const [todosData,setTodosData]= useState([]);
+
+  const fetchTodos=async()=>{
+    try {
+      const response = await axios.get('/api');
+      setTodosData(response.data.todos);
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  }
+
+  useEffect(()=>{
+    fetchTodos();
+  },[])
 
   const onChangeHandler=(e)=>{
     const name = e.target.name;
@@ -19,6 +34,7 @@ export default function Home() {
     try {
        const response = await axios.post('/api',formData);
       toast.success(response.data.message);
+      setFormData({title:"", description:""});
     } catch (error) {
       toast.error("Something went wrong");
     }
@@ -69,7 +85,9 @@ export default function Home() {
             </tr>
           </thead>
           <tbody>
-            <Todo/>
+           {todosData.map((item,index)=>(
+            <Todo key={index}  id={index} title={item.title} description={item.description} complete={item.isCompleted} mongoId={item._id}/>
+           ))}
            
           </tbody>
         </table>

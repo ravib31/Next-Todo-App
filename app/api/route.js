@@ -22,3 +22,25 @@ export async function POST(request){
     // return NextResponse.json({message:"Hello World"})
     return NextResponse.json({message:"Todo Created"})
 }
+
+export async function PUT(request){
+    const mongoId = await request.nextUrl.searchParams.get('mongoId');
+    await TodoModel.findByIdAndUpdate(mongoId,{
+        $set:{
+            isCompleted:true
+        }
+    });
+   
+    // save to database
+    // return response
+    // return NextResponse.json({message:"Hello World"})
+    return NextResponse.json({message:"Todo Updated"})
+}
+export async function DELETE(request){
+    const mongoId = await request.nextUrl.searchParams.get('mongoId');
+    await TodoModel.findByIdAndDelete(mongoId);
+    // save to database
+    // return response
+    // return NextResponse.json({message:"Hello World"})
+    return NextResponse.json({message:"Todo Deleted"})
+}

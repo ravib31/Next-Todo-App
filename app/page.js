@@ -19,6 +19,34 @@ export default function Home() {
     }
   }
 
+  const deleteTodo=async(id)=>{
+    try {
+      const response = await axios.delete('/api',{
+        params:{
+          mongoId:id
+        }
+      });
+      toast.success(response.data.message);
+      await fetchTodos();
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  }
+
+  const completeTodo=async(id)=>{
+    try {
+      const response = await axios.put('/api',{},{
+        params:{
+        mongoId:id
+        }
+      });
+      toast.success(response.data.message);
+      await fetchTodos();
+    } catch (error) {
+      toast.error("Something went wrong");
+    }
+  }
+
   useEffect(()=>{
     fetchTodos();
   },[])
@@ -35,6 +63,7 @@ export default function Home() {
        const response = await axios.post('/api',formData);
       toast.success(response.data.message);
       setFormData({title:"", description:""});
+      await fetchTodos();
     } catch (error) {
       toast.error("Something went wrong");
     }
@@ -58,7 +87,7 @@ export default function Home() {
           onChange={onChangeHandler}
           value={formData.description}
         ></textarea>
-        <button className="bg-lime-600 text-white px-11 py-3" type="submit" >
+        <button className="bg-lime-600 text-white px-11 py-3 rounded-xl" type="submit" >
           Add Todo
         </button>
       </form>
@@ -86,7 +115,7 @@ export default function Home() {
           </thead>
           <tbody>
            {todosData.map((item,index)=>(
-            <Todo key={index}  id={index} title={item.title} description={item.description} complete={item.isCompleted} mongoId={item._id}/>
+            <Todo key={index}  id={index} title={item.title} description={item.description} complete={item.isCompleted} mongoId={item._id} deleteTodo={deleteTodo} completeTodo={completeTodo}/>
            ))}
            
           </tbody>
